@@ -21,6 +21,23 @@ header {
   color: #FFFFFF;
 }
 
+.flex {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 1.5em;
+  font-family: "Oswald", "Times New Roman", sans-serif;
+  font-weight: 700;
+}
+
+.b-text {
+  font-size: 1.3em;
+}
+
+.players {
+  text-align: center;
+}
+
 .game-board-container {
   display: flex;
   justify-content: center;
@@ -39,8 +56,8 @@ header {
 }
 
 .square-container {
-  width: 10vw;
-  height: 10vw;
+  width: 8vw;
+  height: 8vw;
   padding: 10px;
   font-size: 2.5em;
   font-weight: 700;
@@ -109,6 +126,10 @@ header {
   font-weight: 700;
 }
 
+.form input:hover {
+  cursor: text;
+}
+
 .form input:focus {
   outline: none;
 }
@@ -129,4 +150,14 @@ header {
 .form input::placeholder {
   font-weight: 700;
   font-size: 1em;
+}
+
+.form p {
+  color: red;
+  font-size: 1.1em;
+  font-family: "Oswald", "Times New Roman", sans-serif;
+  font-weight: 700;
+  padding: 0;
+  margin: 0;
+  text-align: center;
 }
