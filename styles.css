@@ -32,10 +32,12 @@ header {
 
 .b-text {
   font-size: 1.3em;
+  margin-bottom: 0px;
 }
 
 .players {
   text-align: center;
+  border-bottom: 6px solid #2e2e2e;
 }
 
 .game-board-container {
@@ -87,7 +89,7 @@ header {
 
 .form-container {
   position: absolute;
-  transform: translate(0, -75vh);
+  transform: translate(0, -60vh);
   display: flex;
   justify-content: center;
   width: 100vw;

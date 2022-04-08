@@ -26,18 +26,9 @@ const gameBoard = (() => {
 const displayController = (() => {
   let turn = 1;
 
-  // const renderBoard = () => {
-  //   let counter = 1;
+  const resetBoard = () => {
 
-  //   gameBoard.gameArray.forEach((square) => {
-  //     let squareContainer = document.querySelector(`#square-${counter.toString()}`);
-  //     let squareDiv = document.createElement('div');
-  //     squareDiv.classList.add('square');
-  //     squareDiv.textContent = `${square}`;
-  //     squareContainer.appendChild(squareDiv);
-  //     counter++;
-  //   })
-  // }
+  }
   
   const makeChoice = (e) => {
     if (e.target.textContent != "") {
@@ -107,10 +98,17 @@ const displayController = (() => {
     gameBoard.header.after(div);
   }
 
+  const callWinner = (sign, win) => {
+    if (!win) resetBoard();
+
+    console.log(gameBoard.playerTwoInput.value)
+  }
+
   return {
     makeChoice,
     checkForm,
-    renderPlayers
+    renderPlayers,
+    callWinner
   }
 })();
 
@@ -118,23 +116,51 @@ const runGame = (() => {
   let round = 0;
 
   const playerAssign = (playerOne, playerTwo) => {
-    const first = Player(playerOne, "X");
-    const second = Player(playerTwo, "O");
+    const nameOne = playerOne.toUpperCase();
+    const nameTwo = playerTwo.toUpperCase();
+    const first = Player(nameOne, "X");
+    const second = Player(nameTwo, "O");
     displayController.renderPlayers(first, second);
   }
 
   const updateArray = (square, sign) => {
     const index = parseInt(square.slice(-1)) - 1;
     gameBoard.gameArray[index] = sign;
-    checkWin(gameBoard.gameArray, sign);
+
+    if (sign === "X") round++;
+    if (round < 3) return;
+    checkWin(sign);
   }
 
-  const checkWin = (array, sign) => {
-    if (sign === "X") round++;
+  const checkWin = (sign) => {
+    //All possible win conditions
+    const winningConditions = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ]
 
-    if (round < 3) return;
+    //Loops through to validate if a player has won
+    for (let i = 0; i <= 7; i++) {
+      const winCondition = winningConditions[i];
+      let a = gameBoard.gameArray[winCondition[0]];
+      let b = gameBoard.gameArray[winCondition[1]];
+      let c = gameBoard.gameArray[winCondition[2]];
 
-    console.log('haha')
+      if (a === undefined || b === undefined || c === undefined) continue;
+
+      if ((a === b) && (a === c)) {
+        displayController.callWinner(sign, true);
+        break;
+      }
+
+      displayController.callWinner(sign, false);
+    }
   }
 
   return {
