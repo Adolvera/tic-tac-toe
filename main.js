@@ -1,7 +1,9 @@
+//Player Factory
 const Player = (name, sign) => {
   return { name, sign };
 }
 
+//module for element selectors and event listeners
 const gameBoard = (() => {
   const gameArray = [];
   const boardDiv = document.querySelector('.game-board');
@@ -23,17 +25,52 @@ const gameBoard = (() => {
   }
 })();
 
+//Controls the display of the game
 const displayController = (() => {
   let turn = 1;
+  let games = 0;
 
+  //Creation of winner/tie container
+  const divContainer = document.createElement('div');
+  const div = document.createElement('div');
+  const para = document.createElement('p');
+  const replayButton = document.createElement('button');
+  const newGameButton = document.createElement('button');
+  const buttonContainer = document.createElement('div');
+  replayButton.textContent = "Play Again";
+  newGameButton.textContent = "New Players";
+
+  divContainer.id = "outcome-container"
+  div.id = "outcome"
+  
+  divContainer.appendChild(div);
+  div.appendChild(para);
+  buttonContainer.appendChild(replayButton);
+  buttonContainer.appendChild(newGameButton);
+  div.appendChild(buttonContainer);
+
+  //Event listeners for new game buttons
+  replayButton.addEventListener('click', () => {
+    resetBoard();
+    divContainer.classList.add("hidden");
+  });
+
+  newGameButton.addEventListener('click', () => newGame());
+
+  //Resets board to empty
   const resetBoard = () => {
+    gameBoard.gameArray = [];
 
+    for (let i = 1; i <= 9; i++) {
+      const square = document.querySelector(`#square-${i}`);
+      square.textContent = "";
+    }
   }
   
+  //Shows sign of player where clicked
   const makeChoice = (e) => {
-    if (e.target.textContent != "") {
-      return;
-    }
+    if (e.target.textContent != "") return;
+
     if (turn) {
       e.target.textContent = "X";
       runGame.updateArray(e.target.id, "X");
@@ -45,6 +82,7 @@ const displayController = (() => {
     }
   }
 
+  //Checks form for desired input and starts player assignment
   const checkForm = () => {
     const playerOne = gameBoard.playerOneInput.value;
     const playerTwo = gameBoard.playerTwoInput.value;
@@ -62,7 +100,15 @@ const displayController = (() => {
     }
   }
 
+
+  //Renders player card above board
   const renderPlayers = (playerOne, playerTwo) => {
+
+    if (games > 0) {
+      const tempDiv = document.querySelector('.temp');
+      tempDiv.remove();
+    }
+    
     //Element creation for vs title card
     const div = document.createElement("div");
     const playerOneDiv = document.createElement("div");
@@ -79,29 +125,50 @@ const displayController = (() => {
     signPlayerOne.textContent = `${playerOne.sign}`;
     signPlayerTwo.textContent = `${playerTwo.sign}`;
     versus.textContent = "VS.";
-
     div.classList.add('flex');
+    div.classList.add('temp')
     playerOneDiv.classList.add("players");
     playerTwoDiv.classList.add("players");
     versus.classList.add("b-text");
     signPlayerOne.classList.add("b-text");
     signPlayerTwo.classList.add("b-text");
-
     playerOneDiv.appendChild(pPlayerOne);
     playerOneDiv.appendChild(signPlayerOne);
     playerTwoDiv.appendChild(pPlayerTwo);
     playerTwoDiv.appendChild(signPlayerTwo);
-
     div.appendChild(playerOneDiv);
     div.appendChild(versus);
     div.appendChild(playerTwoDiv);
     gameBoard.header.after(div);
+    games++;
+    
   }
 
+  //Decides winner/tie and pulls up end game container
   const callWinner = (sign, win) => {
-    if (!win) resetBoard();
+    if (!win) {
+      para.textContent = "There was a tie!";
+      divContainer.classList.remove('hidden');
+      gameBoard.formContainer.after(divContainer);
+      turn = 1;
+      return;
+    };
 
-    console.log(gameBoard.playerTwoInput.value)
+    if (sign === "X") para.textContent = `${gameBoard.playerOneInput.value} Wins!`;
+    if (sign === "O") para.textContent = `${gameBoard.playerTwoInput.value} Wins!`;
+
+    divContainer.classList.remove('hidden');
+    gameBoard.formContainer.after(divContainer);
+    turn = 1;
+  }
+
+  //Clears board and returns form for new players
+  const newGame = () => {
+    resetBoard();
+    divContainer.classList.add('hidden');
+    gameBoard.playerTwoInput.value = "";
+    gameBoard.playerOneInput.value = "";
+    gameBoard.formContainer.classList.remove('hidden');
   }
 
   return {
@@ -115,6 +182,7 @@ const displayController = (() => {
 const runGame = (() => {
   let round = 0;
 
+  //Creates players and calls for render of player card
   const playerAssign = (playerOne, playerTwo) => {
     const nameOne = playerOne.toUpperCase();
     const nameTwo = playerTwo.toUpperCase();
@@ -123,6 +191,7 @@ const runGame = (() => {
     displayController.renderPlayers(first, second);
   }
 
+  //Updates gameboard array and calls for win check
   const updateArray = (square, sign) => {
     const index = parseInt(square.slice(-1)) - 1;
     gameBoard.gameArray[index] = sign;
@@ -132,6 +201,7 @@ const runGame = (() => {
     checkWin(sign);
   }
 
+  //Checks for all cases of victory
   const checkWin = (sign) => {
     //All possible win conditions
     const winningConditions = [
@@ -159,8 +229,19 @@ const runGame = (() => {
         break;
       }
 
-      displayController.callWinner(sign, false);
+      if (i === 7) checkTie(sign);
     }
+  }
+
+  //Checks if opponents tied and calls for end game container as well
+  const checkTie = (sign) => {
+    let tie = true;
+    for (let i = 0; i <= 8; i++) {
+      let square = gameBoard.gameArray[i];
+      if (square === undefined) tie = false;
+    }
+
+    if (tie) displayController.callWinner(sign, false);
   }
 
   return {

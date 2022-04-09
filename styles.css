@@ -163,3 +163,45 @@ header {
   margin: 0;
   text-align: center;
 }
+
+#outcome-container {
+  position: absolute;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  transform: translate(0, -60vh);
+}
+
+#outcome {
+  padding: 40px 20px 50px 20px;
+  text-align: center;
+  background-color: #2e2e2e;
+  font-family: "Oswald", "Times New Roman", sans-serif;
+  font-weight: 700;
+  font-size: 1.3em;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  border-radius: 5px;
+  color: #FFFFFF;
+}
+
+#outcome div {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+#outcome button {
+  padding: 10px 5px;
+  font-weight: 700;
+  color: #FFFFFF;
+  background-color: black;
+  border: none;
+  border-radius: 5px;
+}
+
+#outcome button:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}
